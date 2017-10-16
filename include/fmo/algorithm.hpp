@@ -229,7 +229,7 @@ namespace fmo {
         /// To be called every frame, obtaining a list of fast-moving objects that have been
         /// detected this frame. The returned objects (i.e. instances of class Detection) may be
         /// used only before the next call to setInputSwap().
-        virtual void getOutput(Output& output) { output.clear(); }
+        virtual void getOutput(Output &output, bool smoothTrajecotry = false) { output.clear(); }
 
         /// Provide the offset of the frame number in which the detected objects are being reported
         /// relative to the current input frame.

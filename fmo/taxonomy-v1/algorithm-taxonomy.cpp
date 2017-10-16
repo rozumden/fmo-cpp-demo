@@ -43,16 +43,6 @@ namespace fmo {
             mCache.ones.resize(Format::GRAY, level.newDims);
             mCache.ones.wrap().setTo(1);
 
-            mProcessingLevel.inputsGray[0].resize(Format::GRAY, level.newDims);
-            mProcessingLevel.inputsGray[1].resize(Format::GRAY, level.newDims);
-            mProcessingLevel.inputsGray[2].resize(Format::GRAY, level.newDims);
-            mProcessingLevel.inputsGray[3].resize(Format::GRAY, level.newDims);
-
-            mProcessingLevel.G[0].resize(Format::FLOAT, level.newDims);
-            mProcessingLevel.G[1].resize(Format::FLOAT, level.newDims);
-
-            mProcessingLevel.O[0].resize(Format::FLOAT, level.newDims);
-            mProcessingLevel.O[1].resize(Format::FLOAT, level.newDims);
     }
 
     void TaxonomyV1::setInputSwap(Image& in) {
@@ -84,18 +74,6 @@ namespace fmo {
         mProcessingLevel.inputs[1].swap(mProcessingLevel.inputs[0]);
         mProcessingLevel.inputs[0].swap(mCache.image);
 
-        mProcessingLevel.inputsGray[3].swap(mProcessingLevel.inputsGray[2]);
-        mProcessingLevel.inputsGray[2].swap(mProcessingLevel.inputsGray[1]);
-        mProcessingLevel.inputsGray[1].swap(mProcessingLevel.inputsGray[0]);
-        cv::cvtColor(mProcessingLevel.inputs[0].wrap(), mProcessingLevel.inputsGray[0].wrap(), cv::COLOR_BGR2GRAY);
-        
-
-//        mProcessingLevel.G[1].swap(mProcessingLevel.G[0]);
-//        mProcessingLevel.O[1].swap(mProcessingLevel.O[0]);
-
-//        Sobel(mProcessingLevel.inputsGray[0].wrap(), mCache.dx, CV_32F, 1,0);
-//        Sobel(mProcessingLevel.inputsGray[0].wrap(), mCache.dy, CV_32F, 0,1);
-//        cartToPolar(mCache.dx, mCache.dy, mProcessingLevel.G[0].wrap(), mProcessingLevel.O[0].wrap(),1);
     }
 
     void TaxonomyV1::computeBinDiff() {

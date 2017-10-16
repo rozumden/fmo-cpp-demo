@@ -27,7 +27,7 @@ namespace fmo {
         /// To be called every frame, obtaining a list of fast-moving objects that have been
         /// detected this frame. The returned objects (i.e. instances of class Detection) may be
         /// used only before the next call to setInputSwap().
-        virtual void getOutput(Output&) override;
+        virtual void getOutput(Output &, bool smoothTrajecotry) override;
 
         /// Provide the offset of the frame number in which the detected objects are being reported
         /// relative to the current input frame.
@@ -67,7 +67,7 @@ namespace fmo {
 
             int id = 0;
             int area = 0;
-            int len = 0;
+            float len = 0;
             float iou = 0.f;
             Status status; ///< describes the reason why a component was discarded.
             float radius = 0;
@@ -77,15 +77,17 @@ namespace fmo {
             std::vector<cv::Point2f> otherLM;
             std::vector<float> dist;
             SCurve * curve = nullptr;
+            SCurve * curveSmooth = nullptr;
             SCircle circle;
             SLine line;
+            float maxDist = 0.f;
 
             cv::Vec2d center = {0, 0};
             cv::Point2f start = {0, 0};
             Dims size = {0, 0};
         public:
             virtual const void draw(cv::Mat& img) const { if(curve != nullptr) curve->draw(img); }
-            virtual const void drawExt(cv::Mat& img) const { if(curve != nullptr) curve->drawExt(img); }
+            virtual const void drawSmooth(cv::Mat& img) const { if(curve != nullptr) curve->drawSmooth(img); }
             void calcIoU();
         };
 
@@ -97,6 +99,7 @@ namespace fmo {
             float radius = 0;
             float velocity = 0;             ///< in radii per exposure
             SCurve * curve = nullptr;
+            SCurve * curveSmooth = nullptr;
         };
 
         struct MyDetection : public Detection {
@@ -144,9 +147,6 @@ namespace fmo {
 
         struct {
             Image inputs[4];       ///< input images subsampled to processing resolution, 0 - newest
-            Image inputsGray[4];
-            Image G[2];
-            Image O[2];
             Image background;      ///< median of the last three inputs
             Image diff;
             Image binDiff;         ///< binary difference image, latest image vs. background
@@ -175,8 +175,6 @@ namespace fmo {
             Image distTranBGR;
             Image ones;
             Image binDiffInv;
-            cv::Mat dx, dy;
-            cv::Mat Gdif, Odif;
         } mCache;
 
         Differentiator mDiff;               ///< for creating the binary difference image

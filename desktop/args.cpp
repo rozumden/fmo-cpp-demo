@@ -268,7 +268,7 @@ void Args::validate() const {
             throw std::runtime_error("--pause-rg|im must be used with --baseline");
         }
     }
-    if (removal + demo + debug + tutdemo != 1) { throw std::runtime_error("One visualization method should be used."); }
+    if (removal + demo + debug + tutdemo+ headless != 1) { throw std::runtime_error("One visualization method should be used."); }
     if (headless && wait != -1) {
         throw std::runtime_error("--headless cannot be used with --wait or --fast");
     }

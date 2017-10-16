@@ -6,6 +6,10 @@
 #include <stack>
 #include <ctime>
 #include <unistd.h>
+#include <vector>
+#include <numeric>
+#include <string>
+#include <functional>
 
 std::stack<clock_t> tictoc_stack;
 
@@ -25,7 +29,7 @@ namespace {
     const std::vector<fmo::PointSet> noObjects;
 }
 
-void processVideo(Status& s, size_t inputNum) {
+Statistics processVideo(Status& s, size_t inputNum) {
     // open input
     if(s.args.names.size() > inputNum) std::cout << "Processing " << s.args.names.at(inputNum) << std::endl;
     auto input = (!s.haveCamera()) ? VideoInput::makeFromFile(s.args.inputs.at(inputNum))
@@ -69,6 +73,7 @@ void processVideo(Status& s, size_t inputNum) {
     s.inFrameNum = 1;
     s.outFrameNum = 1 + algorithm->getOutputOffset();
 
+    Statistics stat;
     for (; !s.quit && !s.reload; s.inFrameNum++, s.outFrameNum++) {
         // end the video early when GT requests it
         bool allowNewFrames = true;
@@ -98,8 +103,9 @@ void processVideo(Status& s, size_t inputNum) {
         // process
         fmo::convert(frame, frameCopy, format);
         algorithm->setInputSwap(frameCopy);
-        algorithm->getOutput(outputCache);
-       
+        algorithm->getOutput(outputCache, false);
+        stat.nextFrame((int)outputCache.detections.size());
+
         // evaluate
         if (evaluator) {
             if (s.outFrameNum >= 1) {
@@ -132,4 +138,7 @@ void processVideo(Status& s, size_t inputNum) {
         // visualize
         s.visualizer->visualize(s, frame, evaluator.get(), evalResult, *algorithm);
     }
+
+    stat.print();
+    return stat;
 }

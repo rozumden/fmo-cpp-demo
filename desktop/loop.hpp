@@ -15,6 +15,21 @@ struct Visualizer;
 struct AutomaticRecorder;
 struct ManualRecorder;
 
+struct Statistics {
+public:
+    void nextFrame(int nDetections) {
+        totalDetections += nDetections;
+        nFrames++;
+    }
+
+    float getMean() { return (float)totalDetections/nFrames; }
+    void print() {std::cout << "Detections: total - " << totalDetections <<
+                            ", average - " << getMean() << std::endl;}
+    int totalDetections = 0;
+    int nFrames = 0;
+};
+void printStatistics(std::vector<Statistics> &stats);
+
 struct Status {
     Args args;                              ///< user settings
     Window window;                          ///< GUI handle
@@ -39,7 +54,7 @@ struct Status {
     void unsetFrame() { args.frame = -1; }
 };
 
-void processVideo(Status& s, size_t inputNum);
+Statistics processVideo(Status& s, size_t inputNum);
 
 struct Visualizer {
     virtual void visualize(Status& s, const fmo::Region& frame, const Evaluator* evaluator,
@@ -108,7 +123,7 @@ private:
     int mEventsDetected = 0;                       ///< event counter
     int mMaxDetections = 0;
     int mLastDetectFrame = -EVENT_GAP_FRAMES;      ///< the frame when the last detection happened
-    float mLastSpeed = 0;
+    std::vector<float> mLastSpeeds;
     float mMaxSpeed = 0;
 };
 

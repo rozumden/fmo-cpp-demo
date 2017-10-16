@@ -24,7 +24,7 @@ void DebugVisualizer::process(Status& s, const fmo::Region& frame, const Evaluat
     // s.window.print("fps: " + std::to_string(fpsLast));
 
     // get pixel coordinates of detected objects
-    algorithm.getOutput(mOutputCache);
+    algorithm.getOutput(mOutputCache, false);
     mObjectPoints.clear();
     for (auto& detection : mOutputCache.detections) {
         mObjectPoints.emplace_back();
@@ -239,12 +239,16 @@ void DemoVisualizer::printStatus(Status& s, int fpsEstimate) const {
         recording = bool(mManual);
     }
 
+    bool kmh = true;
+    std::string meas = kmh ? " km/h" : " mph";
+    float fctr = kmh ? 1 : 0.621371;
+
     // s.window.print(recording ? "recording" : "not recording");
     s.window.print("Detections: " + std::to_string(mMaxDetections));
-    if(mMaxDetections == 1) {
-        s.window.print("Speed:      " + std::to_string(round(mLastSpeed * 100)/100).substr(0,4) + " km/h");
-    } else s.window.print("Speed:      - ");
-    s.window.print("Max speed: " + std::to_string(round(mMaxSpeed * 100)/100).substr(0,4) + " km/h");
+    for (unsigned int i = 0; i < mLastSpeeds.size(); ++i) {
+        s.window.print("Speed " + std::to_string(i+1) + " : " + std::to_string(std::round(mLastSpeeds[i]*fctr * 100)/100).substr(0,4) + meas);
+    }
+    s.window.print("Max speed: " + std::to_string(std::round(mMaxSpeed*fctr * 100)/100).substr(0,4) + meas);
 
     // s.window.print("fps: " + std::to_string(fpsEstimate));
 //    s.window.print("[?] for help");
@@ -276,8 +280,10 @@ void DemoVisualizer::onDetection(const Status& s, const fmo::Algorithm::Detectio
         fmo::SCurve *c = detection.object.curve->clone();
         c->scale = detection.object.scale;
         mCurves.push_back(c);
-        mLastSpeed = detection.object.velocity * 3.888; // 3600*30 *3.6*1e-5;
-        if(mLastSpeed > mMaxSpeed) mMaxSpeed = mLastSpeed;
+        float radiusCm = 3.6; // floorball = 3.6; tennis = 3.27
+        float sp = detection.object.velocity * 3600* 29.97 * radiusCm *1e-5;
+        mLastSpeeds.push_back(sp);
+        if(sp > mMaxSpeed) mMaxSpeed = sp;
     }
 
     // make sure to keep the number of segments bounded in case there's a long event
@@ -311,7 +317,7 @@ void DemoVisualizer::drawSegments(fmo::Image& im) {
         color.r = std::max(color.r, uint8_t(color.r + 4));
         cv::Scalar cvColor(color.b, color.g, color.r);
 
-        curve->drawExt(mat, cvColor, thickness);
+        curve->drawSmooth(mat, cvColor, thickness);
     }
 }
 
@@ -330,8 +336,10 @@ void DemoVisualizer::process(Status& s, const fmo::Region& frame, fmo::Algorithm
     auto fpsEstimate = [this]() { return std::round(mStats.quantilesHz().q50); };
 
     // get detections
-    algorithm.getOutput(mOutput);
+    algorithm.getOutput(mOutput, true);
     mNumberDetections = mOutput.detections.size();
+    if(mNumberDetections > 0)     mLastSpeeds.clear();
+
     if (mNumberDetections > mMaxDetections) {
         mMaxDetections = mNumberDetections;
         mOffsetFromMaxDetection = 0;
@@ -458,7 +466,7 @@ void RemovalVisualizer::visualize(Status& s, const fmo::Region& frame, const Eva
     s.window.setTextColor(mManual ? Colour::lightRed() : Colour::lightGray());
 
     // get pixel coordinates of detected objects
-    algorithm.getOutput(mOutputCache);
+    algorithm.getOutput(mOutputCache, false);
     mObjectPoints.clear();
     for (auto& detection : mOutputCache.detections) {
         mObjectPoints.emplace_back();

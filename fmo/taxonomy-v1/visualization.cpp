@@ -33,13 +33,11 @@ namespace fmo {
         cv::Mat cvVisFull = mCache.visualizedFull.wrap();
         cv::Mat cvDTBGR = mCache.distTranBGR.wrap();
         cv::Mat cvDT = mProcessingLevel.distTran.wrap();
-        cv::Mat cvObj = mCache.objectsMask.wrap();
         if (showIm) {
             fmo::copy(mProcessingLevel.inputs[0], mCache.visualized);
         } else {
             cvVis.setTo(0);
         }
-        cvObj.setTo(0);
 
         if (add == 1) {
             std::vector<cv::Mat> channels;
@@ -98,15 +96,22 @@ namespace fmo {
                 if (level < 2) cont = true;
                 color = &colorYellow; 
             }
+            if (comp.status == Component::FMO_NOT_CONFIRMED) {
+                if (level < 2) cont = true;
+                color = &colorRed;
+            }
             if (comp.status == Component::FMO) { 
                 if (level < 1) cont = true;
                 color = &colorGreen; 
             }
 
             comp.curve->scale = mProcessingLevel.scale;
-            if(!cont) { 
+            if(!cont) {
                 comp.draw(cvVisFull);
-                comp.curve->draw(cvObj, objColor, 2*comp.radius/mProcessingLevel.scale); 
+                if(comp.curveSmooth != nullptr) {
+                    comp.curveSmooth->scale = mProcessingLevel.scale;
+                    comp.curveSmooth->drawSmooth(cvVisFull, objColor, 1);
+                }
             }
 
             if (showLM) {

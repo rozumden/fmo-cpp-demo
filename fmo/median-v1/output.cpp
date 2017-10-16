@@ -23,7 +23,7 @@ namespace fmo {
         return b;
     }
 
-    void MedianV1::getOutput(Output& out) {
+    void MedianV1::getOutput(Output &out, bool smoothTrajecotry) {
         out.clear();
         Detection::Predecessor detPrev;
         Detection::Object detObj;

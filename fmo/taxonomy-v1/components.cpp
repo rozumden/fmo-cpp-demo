@@ -7,42 +7,16 @@
 
 namespace fmo {
     void TaxonomyV1::findComponents() {
-        auto& input = mProcessingLevel.binDiff;
-        
-        // remove all edge pixels (DT == 1)
-//        distance_transform(input, mProcessingLevel.distTran);
-//        input.wrap() = mProcessingLevel.distTran.wrap() >= 1;
-        
-        // calculate distance transform
-//        fmo::copy(input, mCache.binDiffInv);
-//        mCache.binDiffInv.wrap() = 255 - mCache.binDiffInv.wrap();
-//        distance_transform(mCache.binDiffInv, mProcessingLevel.distTran);
-        
-        // return edge pixels
-//        input.wrap() = mProcessingLevel.distTran.wrap() <= 1;
-        // fmo::imfill(mCache.binDiffInv, input);
-
         // calculate final distance tranform
-        distance_transform(input, mProcessingLevel.distTran);
+        distance_transform(mProcessingLevel.binDiff, mProcessingLevel.distTran);
 
         // local maxima calculation
         local_maxima(mProcessingLevel.distTran, mProcessingLevel.localMaxima);
-        mProcessingLevel.objectsNow = cv::connectedComponentsWithStats(input.wrap(),
+        mProcessingLevel.objectsNow = cv::connectedComponentsWithStats(
+                          mProcessingLevel.binDiff.wrap(),
                           mProcessingLevel.labels.wrap(),
                           mProcessingLevel.stats,
                           mProcessingLevel.centroids, 8);
-
-//        mCache.Gdif = abs(mProcessingLevel.G[0].wrap() - mProcessingLevel.G[1].wrap());
-//		mCache.Odif = abs(mProcessingLevel.O[0].wrap() - mProcessingLevel.O[1].wrap() - 180);
-
-//        cv::Ptr<cv::BackgroundSubtractor> pMOG2;
-//        pMOG2 = cv::createBackgroundSubtractorMOG2(2, 1000,false);
-//		cv::Mat mask;
-//        pMOG2->apply(mProcessingLevel.inputs[0].wrap(), mask);
-//        float n = cv::countNonZero(mask);
-//        mProcessingLevel.binDiff.wrap().setTo(0);
-//        mask.convertTo(mProcessingLevel.binDiff.wrap(),getCvType(mProcessingLevel.binDiff.format()));
-//		cv::threshold(mask, mask, 127, 255, cv::THRESH_BINARY);
 
     }
 
@@ -73,7 +47,6 @@ namespace fmo {
         bool realTime = true;
 
     	mObjects.clear();
-        auto& input = mProcessingLevel.labels;
         mPrevComponents.swap(mComponents);
     	mComponents.clear();
     	float w = mProcessingLevel.newDims.width, h = mProcessingLevel.newDims.height;
@@ -99,14 +72,14 @@ namespace fmo {
             return;
         }
 
-        cv::Mat inputCv = input.wrap();
+        cv::Mat labels = mProcessingLevel.labels.wrap();
         cv::Mat dt = mProcessingLevel.distTran.wrap();
         cv::Mat lm = mProcessingLevel.localMaxima.wrap();
     	int32_t* p;
     	float* p2;
     	uint8_t* p3;
     	for(int row = 0; row < h; ++row) {
-	        p = inputCv.ptr<int32_t>(row);
+	        p = labels.ptr<int32_t>(row);
 	        p2 = dt.ptr<float>(row);
 	        p3 = lm.ptr<uint8_t>(row);
 	        for (int column = 0; column < w; ++column) {
@@ -163,25 +136,11 @@ namespace fmo {
     			continue;
     		}
 
-            /// fit curves
-            float scoreLine = fmo::fitline(comp.trajFinal, comp.radius, comp.line);
-            float scoreCircle = fmo::fitcircle(comp.trajFinal, comp.radius, comp.circle);
-
-            float score;
-            if (scoreCircle > scoreLine) {
-                score = scoreCircle;
-                comp.curve = &comp.circle;
-                if (comp.circle.radius < comp.radius) {
-                    comp.status = Component::NOT_STROKE;
-                    continue;
-                }
-            } else {
-                score = scoreLine;
-                comp.curve = &comp.line;
-            }
+            /// fit curve
+            float score = fmo::fitcurve(comp.trajFinal, comp.radius, comp.curve, comp.circle, comp.line);
 
 			comp.len = comp.curve->length;
-			if(score < 0.1*comp.len) { // score threshold
+			if(score == 0) { // score threshold
                 comp.status = Component::NOT_STROKE;
                 continue;
             }
@@ -192,34 +151,8 @@ namespace fmo {
 				comp.status = Component::NOT_STROKE;
 				continue;
 			}
+            comp.maxDist = comp.curve->maxDist(comp.trajFinal);
 
-    		////////// fixed ////////////////////////////////////
-    		// std::vector<uchar> st;
-            // std::vector<float> errs;
-    		// int winSize = 2*comp.radius+1;
-    		// winSize = std::max(winSize,3);
-    		// winSize = std::min(winSize,21);
-    		// cv::calcOpticalFlowPyrLK(mProcessingLevel.inputsGray[0].wrap(), 
-    		// 						 mProcessingLevel.inputsGray[1].wrap(), 
-    		// 	  comp.trajFinal, comp.traj, st, errs, 
-    		// 	  cv::Size(winSize,winSize), 0);
-    		// float sum = std::accumulate(st.begin(),st.end(),0);
-    		// float meanD = 0, displacement = 0, maxD = 0;
-    		
-    		// for (int i = 0; i < (int)comp.trajFinal.size(); ++i) {
-    		// 	if(st[i] == 0) continue;
-    		// 	displacement = cv::norm(comp.trajFinal[i] - comp.traj[i]);
-    		// 	if(displacement > maxD) maxD = displacement;
-    		// 	meanD += displacement/sum;
-    		// }
-
-    		// if(sum/st.size() > 0.05 && meanD >= comp.radius/3 && meanD < 1.5*comp.radius
-    		// 		&& abs(meanD - maxD) < std::max(3.f,comp.radius/2)) 
-    		// {
-    		// 	comp.status = Component::LATERAL;
-    		// 	continue;
-    		// }
-            
     		///////////////////////////////////////////////////////////
 
     		float count = 0;
@@ -235,50 +168,40 @@ namespace fmo {
     			continue;
     		}
             
-    		///////////////// SHADOWS //////////////////////////////////////////
-
-//            float meanO = 0, meanG = 0;
-//            float trajSize = comp.trajFinal.size();
-//            for (int i = 0; i < (int)comp.trajFinal.size(); ++i) {
-//               meanG += mCache.Gdif.at<float>(comp.trajFinal[i].y,comp.trajFinal[i].x)/trajSize;
-//               meanO += mCache.Odif.at<float>(comp.trajFinal[i].y,comp.trajFinal[i].x)/trajSize;
-//            }
-//            if(meanO < 30 && meanG < 20) {
-//               comp.status = Component::SHADOW;
-//               continue;
-//            }
 
             comp.status = Component::FMO_NOT_CONFIRMED;
 
             ///////////////// Check with previous detections  /////////////////////////////////////////
             float maxScore = 0;
+            float maxAllowedExp = 3;
             int ind = -1;
             for (unsigned int jj = 0; jj < mPrevComponents.size(); ++jj) {
                 auto& compOld = mPrevComponents[jj];
                 if(compOld.status != Component::FMO && compOld.status != Component::FMO_NOT_CONFIRMED)
                     continue;
                 float d = cv::norm(comp.center - compOld.center);
-                if(d > 4*comp.len) continue;
+                if(d > maxAllowedExp*comp.len) continue;
                 compOld.trajFinal.insert(compOld.trajFinal.end(), comp.trajFinal.begin(), comp.trajFinal.end());
-                float s = fmo::fitcircle(compOld.trajFinal, comp.radius, compOld.circle, compOld.center,comp.center);
 
+                float s = fmo::fitcurve(compOld.trajFinal, comp.radius, compOld.curve,
+                                        compOld.circle, compOld.line, compOld.center, comp.center);
+                if(compOld.curve->length > maxAllowedExp*comp.len) s = 0;
+                if(compOld.curve->length < comp.len) s = 0;
                 if(s > maxScore) {
                     ind = jj;
                     maxScore = s;
                 }
             }
 
-            if (maxScore <= 1.1*score) {
-                continue;
-            }
-            float maxDist = fmo::getMaxDist(mPrevComponents[ind].trajFinal,
-                                            {mPrevComponents[ind].circle.x,mPrevComponents[ind].circle.y},
-                                            mPrevComponents[ind].circle.radius);
+            if (maxScore == 0) continue;
+            comp.curveSmooth = mPrevComponents[ind].curve->clone();
+
+            float maxDist = mPrevComponents[ind].curve->maxDist(mPrevComponents[ind].trajFinal);
             if(maxDist > comp.radius) {
                 continue;
             }
-            comp.curve = &mPrevComponents[ind].circle;
 
+            comp.len = comp.curveSmooth->length;
             ///////////////////////////////////////////////////////////////
             comp.status = Component::FMO;
 
@@ -289,7 +212,8 @@ namespace fmo {
     		o.length = comp.len/mProcessingLevel.scale; 
     		o.radius = comp.radius/mProcessingLevel.scale;
             o.curve = comp.curve;
-            o.velocity = comp.len / o.radius;
+            o.curveSmooth = comp.curveSmooth;
+            o.velocity = comp.len / (o.radius+1.5); // in radii per exposure
 
             mObjects.push_back(o);
     	}

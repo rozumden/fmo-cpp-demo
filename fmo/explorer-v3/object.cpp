@@ -139,7 +139,7 @@ namespace fmo {
         float average(float v1, float v2) { return (v1 + v2) / 2; }
     }
 
-    void ExplorerV3::getOutput(Output& out) {
+    void ExplorerV3::getOutput(Output &out, bool smoothTrajecotry) {
         out.clear();
         Detection::Object detObj;
         Detection::Predecessor detPrev;

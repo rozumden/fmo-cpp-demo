@@ -178,7 +178,7 @@ namespace fmo {
         }
     }
 
-    void ExplorerV1::getOutput(Output& out) {
+    void ExplorerV1::getOutput(Output &out, bool smoothTrajecotry) {
         out.clear();
         Detection::Object detObj;
         Detection::Predecessor detPrev;

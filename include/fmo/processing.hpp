@@ -22,27 +22,32 @@ namespace fmo {
         double scale = 1;
         cv::Point2f shift{0,0};
         float length = 0;
-        virtual const void draw(cv::Mat& cvVis, cv::Scalar clr = cv::Scalar{0,0,0}, float thickness = 1) const { };
-        virtual const void drawExt(cv::Mat& cvVis, cv::Scalar clr = cv::Scalar{0,0,0}, float thickness = 1) const { };
-        virtual const void drawExt(cv::Mat& cvVis, cv::Scalar clr, float thickness, float alpha) const;
-        virtual SCurve* clone() const { 
+        cv::Point2f start{0, 0};
+        cv::Point2f end{0, 0};
+        cv::Point2f center{0, 0};
+
+        virtual void draw(cv::Mat& cvVis, cv::Scalar clr = cv::Scalar{0,0,0}, float thickness = 1) const { };
+        virtual void drawSmooth(cv::Mat& cvVis, cv::Scalar clr = cv::Scalar{0,0,0}, float thickness = 1) const { };
+        virtual float maxDist(const std::vector<cv::Point2f>& pixels) const { return 0; };
+        virtual SCurve* clone() const {
             return new SCurve(*this); 
         };
     };
+
     struct SLine : SCurve 
     {
         SLine() {}
         cv::Vec4f params{0, 0, 0, 0};
         cv::Point2f normal{0, 0};
         cv::Point2f perp{0,0};
-        cv::Point2f start{0, 0};
-        cv::Point2f end{0, 0};
-        cv::Point2f startExt{0, 0};
-        cv::Point2f endExt{0, 0};
+
+        cv::Point2f startSmooth{0, 0};
+        cv::Point2f endSmooth{0, 0};
 
     public:
-        virtual const void draw(cv::Mat& cvVis, cv::Scalar clr, float thickness) const override;
-        virtual const void drawExt(cv::Mat& cvVis, cv::Scalar clr, float thickness) const override;
+        virtual void draw(cv::Mat& cvVis, cv::Scalar clr, float thickness) const override;
+        virtual void drawSmooth(cv::Mat& cvVis, cv::Scalar clr, float thickness) const override;
+        virtual float maxDist(const std::vector<cv::Point2f>& pixels) const override;
         virtual SCurve* clone() const override {
             return new SLine(*this); 
         }
@@ -50,27 +55,22 @@ namespace fmo {
 
     struct SCircle : SCurve 
     {
-        SCircle():
-            radius(0),
-            x(0),
-            y(0),
-            startDegree(0),
-            endDegree(360),
-            startDegreeExt(0),
-            endDegreeExt(180)
-        { }
-        float radius;
-        float x;
-        float y;
-        double startDegree;
-        double endDegree;
+        SCircle() { }
+        float radius{0};
+        float x{0};
+        float y{0};
+        double startDegree{0};
+        double endDegree{360};
 
-        double startDegreeExt;
-        double endDegreeExt;
+        double startDegreeSmooth{0};
+        double endDegreeSmooth{180};
+
+        double size{0};
 
     public:
-        virtual const void draw(cv::Mat& cvVis, cv::Scalar clr, float thickness) const override;
-        virtual const void drawExt(cv::Mat& cvVis, cv::Scalar clr, float thickness) const override;
+        virtual void draw(cv::Mat& cvVis, cv::Scalar clr, float thickness) const override;
+        virtual void drawSmooth(cv::Mat& cvVis, cv::Scalar clr, float thickness) const override;
+        virtual float maxDist(const std::vector<cv::Point2f>& pixels) const override;
         virtual SCurve* clone() const override {
             return new SCircle(*this); 
         }
@@ -132,13 +132,15 @@ namespace fmo {
     void flip(const Mat& src, Mat& dst);
 
     float fitline(const std::vector<cv::Point2f>& pixels, float fmoRadius, SLine &line);
-
     float fitcircle(const std::vector<cv::Point2f>& pixels, float fmoRadius, SCircle &circle);
+    float fitcurve(const std::vector<cv::Point2f>& pixels, float fmoRadius, SCurve *&curve,
+                   SCircle &circle, SLine &line);
+    float fitcurve(const std::vector<cv::Point2f>& pixels, float fmoRadius, SCurve *&curve,
+                   SCircle &circle, SLine &line, const cv::Vec2f &c1, const cv::Vec2f &c2);
 
     float fitcircle(const std::vector<cv::Point2f>& pixels, float fmoRadius, SCircle &circle,
-                    const cv::Vec2d &c1, const cv::Vec2d &c2);
+                    const cv::Vec2f &c1, const cv::Vec2f &c2);
 
-    float getMaxDist(const std::vector<cv::Point2f>& pixels, const cv::Point2f &center, const float &radius);
 
     }
 

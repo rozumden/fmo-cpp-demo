@@ -20,7 +20,7 @@ namespace fmo {
         return b;
     }
 
-    void TaxonomyV1::getOutput(Output& out) {
+    void TaxonomyV1::getOutput(Output &out, bool smoothTrajecotry) {
         out.clear();
         Detection::Object detObj;
          for (auto& o : mObjects) {
@@ -28,7 +28,12 @@ namespace fmo {
             detObj.direction[0] = o.direction.y;
             detObj.direction[1] = o.direction.x;
             detObj.length = 4.f * o.length;
-            detObj.curve = o.curve->clone();
+
+            if(smoothTrajecotry) {
+                detObj.curve = o.curveSmooth->clone();
+            } else {
+                detObj.curve = o.curve->clone();
+            }
             detObj.curve->scale = mProcessingLevel.scale;
 
             detObj.scale = mProcessingLevel.scale;
