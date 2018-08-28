@@ -80,7 +80,7 @@ namespace fmo {
 
             // remove matches that involve the newly matched objects
             auto last = std::remove_if(begin(mCache.matches), end(mCache.matches),
-                                       [this, selected](const Match& m) {
+                                       [selected](const Match& m) {
                                            return m.objects[0] == selected.objects[0] ||
                                                   m.objects[1] == selected.objects[1];
                                        });
