@@ -77,11 +77,11 @@ void EvaluationReport::info(std::ostream& out, Stats& stats, const Results& resu
     using stat_func_t = std::function<double(Evaluation&)>;
     std::array<stat_func_t, Stats::NUM_STATS> statFuncs = {{precision, recall, fscore_05, fscore_10,
                                                            fscore_20}};
-    std::array<const char*, Stats::NUM_STATS> funcNames = {
+    std::array<const char*, Stats::NUM_STATS> funcNames = {{
         args.tex ? "Precision" : "precision", args.tex ? "Recall" : "recall",
         args.tex ? "$F_{0.5}$" : "F_0.5",     args.tex ? "$F_1$" : "F_1.0",
         args.tex ? "$F_2$" : "F_2.0",
-    };
+    }};
     constexpr bool funcDisplayed[] = {true, true, false, true, false};
 
     auto countStrImpl = [](int val, int valBase) {
