@@ -234,7 +234,7 @@ void Evaluator::evaluateFrame(const fmo::Algorithm::Output& dt, int frameNum, Ev
         throw std::runtime_error("movie length inconsistent with GT");
     }
 
-    auto iou = [this](const fmo::PointSet& ps1, const fmo::PointSet& ps2) {
+    auto iou = [](const fmo::PointSet& ps1, const fmo::PointSet& ps2) {
         int intersection = 0;
         int union_ = 0;
         auto mismatch = [&](fmo::Pos) { union_++; };
