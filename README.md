@@ -3,6 +3,7 @@ FMO detection (demo version)
 
 Prerequisites:
 1. opencv 
+2. boost
 
 To copile:
 1. mkdir build
