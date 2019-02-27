@@ -5,7 +5,7 @@ Prerequisites:
 1. opencv 
 2. boost
 
-To copile:
+To compile:
 1. mkdir build
 2. cd build
 3. cmake ..
