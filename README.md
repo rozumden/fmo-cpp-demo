@@ -12,11 +12,11 @@ To compile:
 4. make
 5. sudo make install
 
-To run real-time on a camera:
+To run real-time on a camera (two versions of demo):
 1. fmo-desktop --camera 0 --demo
 2. fmo-desktop --camera 0 --tutdemo
 
-To run for a specific video:
+To run for a specific video (two versions of demo):
 1. fmo-desktop --input <path> --demo
 2. fmo-desktop --input <path> --tutdemo
 
