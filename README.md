@@ -14,9 +14,11 @@ To compile:
 
 To run real-time on a camera:
 1. fmo-desktop --camera 0 --demo
+2. fmo-desktop --camera 0 --tutdemo
 
 To run for a specific video:
 1. fmo-desktop --input <path> --demo
+2. fmo-desktop --input <path> --tutdemo
 
 Help:
 1. fmo-desktop --help
