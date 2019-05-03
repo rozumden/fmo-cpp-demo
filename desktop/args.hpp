@@ -31,6 +31,7 @@ struct Args {
     bool headless;                   ///< don't draw GUI unless the playback is paused
     bool demo;                       ///< force demo visualizer
     bool tutdemo;                    ///< force tutdemo visualizer
+    bool utiademo;                   ///< force utiademo visualizer
     bool debug;                      ///< force debug visualizer
     bool removal;                    ///< force removal visualizer (highest priority)
     bool noRecord;                    ///< force removal visualizer (highest priority)

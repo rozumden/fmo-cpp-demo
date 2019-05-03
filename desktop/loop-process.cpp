@@ -34,6 +34,7 @@ Statistics processVideo(Status& s, size_t inputNum) {
     if(s.args.names.size() > inputNum) std::cout << "Processing " << s.args.names.at(inputNum) << std::endl;
     auto input = (!s.haveCamera()) ? VideoInput::makeFromFile(s.args.inputs.at(inputNum))
                                    : VideoInput::makeFromCamera(s.args.camera);
+    
     auto dims = input->dims();
     float fps = input->fps();
 

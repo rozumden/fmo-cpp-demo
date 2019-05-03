@@ -149,6 +149,28 @@ private:
     int mLastMode = -1;
 };
 
+
+struct UTIADemoVisualizer : public Visualizer {
+    UTIADemoVisualizer(Status& s);
+
+    virtual void visualize(Status& s, const fmo::Region& frame, const Evaluator* evaluator,
+                           const EvalResult& evalResult, fmo::Algorithm& algorithm) override;
+
+private:
+    bool mRecord = false;
+    int mPreviousDetections = 0;
+    DemoVisualizer vis1;
+    std::vector<cv::Mat> imgs;
+    fmo::Image mVis;                // image collage
+    fmo::Image mTempDebug;
+    fmo::Image mTemp2Debug;
+    int mOffsetFromMax = 0;
+    fmo::Image mLastDetectedImage;
+    fmo::Image mMaxDetectedImage;
+
+    int mLastMode = -1;
+};
+
 struct RemovalVisualizer : public Visualizer {
     RemovalVisualizer(Status& s);
 

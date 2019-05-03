@@ -98,6 +98,7 @@ Args::Args(int argc, char** argv)
       headless(false),
       demo(false),
       tutdemo(false),
+      utiademo(false),
       debug(false),
       removal(false),
       noRecord(false),
@@ -120,6 +121,7 @@ Args::Args(int argc, char** argv)
     mParser.add("--headless", headlessDoc, headless);
     mParser.add("--demo", demoDoc, demo);
     mParser.add("--tutdemo", demoDoc, tutdemo);
+    mParser.add("--utiademo", demoDoc, utiademo);
     mParser.add("--debug", debugDoc, debug);
     mParser.add("--removal", removalDoc, removal);
     mParser.add("--no-record", noRecordDoc, noRecord);
@@ -268,7 +270,7 @@ void Args::validate() const {
             throw std::runtime_error("--pause-rg|im must be used with --baseline");
         }
     }
-    if (removal + demo + debug + tutdemo+ headless != 1) { throw std::runtime_error("One visualization method should be used."); }
+    if (removal + demo + debug + tutdemo + utiademo + headless != 1) { throw std::runtime_error("One visualization method should be used."); }
     if (headless && wait != -1) {
         throw std::runtime_error("--headless cannot be used with --wait or --fast");
     }

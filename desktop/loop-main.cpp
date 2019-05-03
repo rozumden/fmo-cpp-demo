@@ -51,6 +51,8 @@ int main(int argc, char** argv) try
             s.visualizer = std::unique_ptr<Visualizer>(new RemovalVisualizer{s});
         } else if (s.args.tutdemo) {
             s.visualizer = std::unique_ptr<Visualizer>(new TUTDemoVisualizer{s});
+        } else if (s.args.utiademo) {
+            s.visualizer = std::unique_ptr<Visualizer>(new UTIADemoVisualizer{s});
         } else
         s.visualizer = demo ? std::unique_ptr<Visualizer>(new DemoVisualizer{s})
                             : std::unique_ptr<Visualizer>(new DebugVisualizer{s});

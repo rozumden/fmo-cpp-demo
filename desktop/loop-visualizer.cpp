@@ -96,6 +96,34 @@ void DebugVisualizer::visualize(Status& s, const fmo::Region& frame, const Evalu
     this->processKeyboard(s,frame);
 }
 
+// UTIA Demo
+UTIADemoVisualizer::UTIADemoVisualizer(Status &s) : vis1(s) {
+    s.window.setTopLine("Fast Moving Objects Detection");
+}
+
+
+void UTIADemoVisualizer::visualize(Status& s, const fmo::Region& frame, const Evaluator* evaluator,
+                                  const EvalResult& evalResult, fmo::Algorithm& algorithm) {
+    this->vis1.process(s,frame,algorithm);
+    if(mLastDetectedImage.data() == nullptr) fmo::copy(frame,mLastDetectedImage);
+    if(mMaxDetectedImage.data() == nullptr) fmo::copy(frame,mMaxDetectedImage);
+    if (this->mPreviousDetections*this->vis1.mNumberDetections > 0) {
+        fmo::copy(this->vis1.mVis, mLastDetectedImage);
+    }
+    if(this->vis1.mOffsetFromMaxDetection == 0) {
+        fmo::copy(this->vis1.mVis, mMaxDetectedImage);
+        this->mOffsetFromMax = 0;
+    } else this->mOffsetFromMax++;
+
+    s.window.display(this->vis1.mVis);
+
+    this->vis1.processKeyboard(s,frame);
+    this->mPreviousDetections = this->vis1.mNumberDetections;
+    mLastMode = this->vis1.mode;
+}
+
+
+
 // TUT Demo
 
 TUTDemoVisualizer::TUTDemoVisualizer(Status &s) : vis1(s) {
