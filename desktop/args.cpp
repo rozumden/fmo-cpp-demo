@@ -7,6 +7,8 @@ namespace {
     doc_t helpDoc = "Display help.";
     doc_t expDoc = "Set exposure value. Should be between 0 and 1. Usually between 0.03 and 0.1.";
     doc_t fpsDoc = "Set number of frames per second.";
+    doc_t radiusDoc = "Set object radius in cm. Used for speed estimation. Used if --p2cm is not specified. By default used for tennis/floorball: 3.6 cm.";
+    doc_t p2cmDoc = "Set how many cm are in one pixel on object. Used for speed estimation. More dominant than --radius.";
     doc_t defaultsDoc = "Display default values for all parameters.";
     doc_t algorithmDoc = "<name> Specifies the name of the algorithm variant. Use --list to list "
                          "available algorithm names.";
@@ -106,6 +108,8 @@ Args::Args(int argc, char** argv)
       noRecord(false),
       exposure(100),
       fps(-1),
+      radius(3.6),
+      p2cm(-1),
       params(),
       mParser(),
       mHelp(false),
@@ -132,6 +136,8 @@ Args::Args(int argc, char** argv)
 
     mParser.add("--exposure", expDoc, exposure);
     mParser.add("--fps", fpsDoc, fps);
+    mParser.add("--p2cm", p2cmDoc, p2cm);
+    mParser.add("--radius", radiusDoc, radius);
 
     mParser.add("\nInput:");
     mParser.add("--include", includeDoc, [this](const std::string& path) { mParser.parse(path); });

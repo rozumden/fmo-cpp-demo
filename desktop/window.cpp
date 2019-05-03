@@ -119,6 +119,17 @@ void Window::printText(cv::Mat& mat) {
         cv::Point helpOrigin{pad+offset, above+pad/2};
         cv::putText(mat, mTopLine, helpOrigin, fontFace, fontScale, color, thick);
     }
+
+    // render table 
+    // if (visTable && !mTable.empty()) {
+    //     int lineWidth = mat.cols / 3;
+    //     int helpRectHeight = ((above + below) + 2 * pad) * mTable.size();
+    //     cv::Rect helpRect{mat.cols*2/3, mat.cols/10, lineWidth, helpRectHeight};
+    //     mat(helpRect) = 0.3 * mat(helpRect);
+    //     // for(auto &el : mTable) {
+
+    //     // }
+    // }
 }
 
 Command Window::getCommand(bool block) {
@@ -150,6 +161,8 @@ Command Window::encodeKey(int keyCode) {
         return Command::JUMP_BACKWARD;
     case '.':
         return Command::JUMP_FORWARD;
+    case 'n':
+        return Command::INPUT;
     case 'r':
     case 'R':
         return Command::RECORD;

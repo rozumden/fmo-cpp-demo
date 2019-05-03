@@ -33,6 +33,7 @@ enum class Command {
     LOCAL_MAXIMA,
     SHOW_IM,
     SHOW_NONE,
+    INPUT,
 };
 
 struct Colour {
@@ -93,6 +94,9 @@ private:
     bool mOpen = false;
     std::string mBottomLine;
     std::string mTopLine;
+public: 
+    std::vector<std::pair<float, std::string>> mTable;
+    bool visTable = false;
 };
 
 /// Visualize a given set of points painting it onto the target image with the specified color.

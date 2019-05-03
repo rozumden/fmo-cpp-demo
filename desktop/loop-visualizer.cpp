@@ -115,6 +115,54 @@ void UTIADemoVisualizer::visualize(Status& s, const fmo::Region& frame, const Ev
         this->mOffsetFromMax = 0;
     } else this->mOffsetFromMax++;
 
+
+    if(this->vis1.mode == 2) 
+        s.window.visTable = true;
+    else 
+        s.window.visTable = false;
+    
+    // put best players
+    auto &playerName = s.inputString;
+    int stringSize = 10;
+    if((int)playerName.size() < stringSize) 
+        playerName = playerName + std::string(stringSize-playerName.size(), ' ');
+    if((int)playerName.size() > stringSize) 
+        playerName = playerName.substr(0,stringSize);
+
+    if(vis1.mLastSpeeds.size() > 0) {
+        float spnow = std::round(vis1.mLastSpeeds[0]*100)/100;
+        if(s.window.mTable.size() < 10)
+            s.window.mTable.push_back(std::make_pair(spnow, playerName));
+        else {
+            bool putitthere = true;
+            for(auto &el : s.window.mTable) {
+                if(std::abs(el.first - spnow) < 0.001 && el.second.compare(playerName) == 0) {
+                    putitthere = false;
+                    break;
+                }
+            }
+
+            if(putitthere) {
+                auto &lastel = s.window.mTable[s.window.mTable.size()-1];
+                if(spnow > lastel.first)
+                    lastel = std::make_pair(spnow, playerName);
+            }
+        }
+    }
+    std::sort(s.window.mTable.begin(), s.window.mTable.end(), std::greater <>());
+
+    if(s.window.visTable) {
+        std::string pref;
+        for (int ik = 0; ik < (int)s.window.mTable.size(); ++ik) {
+            auto &el = s.window.mTable[ik];
+            if(ik < 9)
+               pref = " ";
+            else
+               pref = "";
+
+            s.window.print(pref+std::to_string(ik+1)+". "+el.second+": "+std::to_string(el.first).substr(0,4) + " km/h");
+        }
+    }
     s.window.display(this->vis1.mVis);
 
     this->vis1.processKeyboard(s,frame);
@@ -308,8 +356,18 @@ void DemoVisualizer::onDetection(const Status& s, const fmo::Algorithm::Detectio
         fmo::SCurve *c = detection.object.curve->clone();
         c->scale = detection.object.scale;
         mCurves.push_back(c);
-        float radiusCm = 3.6; // floorball = 3.6; tennis = 3.27
-        float sp = detection.object.velocity * 3600* 29.97 * radiusCm *1e-5;
+        float radiusCm = s.args.radius; // floorball = 3.6; tennis = 3.27
+        float sp = 0;
+        float fpsReal = 29.97;
+        if(s.args.fps != -1) fpsReal = s.args.fps;
+
+        if(s.args.p2cm == -1) 
+            sp = detection.object.velocity * 3600* fpsReal * radiusCm * 1e-5;
+        else {
+            float len = detection.object.velocity * (detection.object.radius+1.5);
+            std::cout << len << std::endl;
+            sp = len * s.args.p2cm * fpsReal *3600 * 1e-5;
+        }
         mLastSpeeds.push_back(sp);
         if(sp > mMaxSpeed) mMaxSpeed = sp;
     }
@@ -412,6 +470,11 @@ void DemoVisualizer::processKeyboard(Status& s, const fmo::Region& frame) {
     do {
         auto command = s.window.getCommand(false);
         if (command == Command::PAUSE) { s.paused = !s.paused; }
+        if (command == Command::INPUT) { 
+            std::getline(std::cin, s.inputString);
+            // system("zenity  --title  \"Gimme some text!\" --entry --text \"Enter your text here\"");
+            // s.inputString = "Denis"; 
+        }
         if (command == Command::STEP) step = true;
         if (command == Command::QUIT) { s.quit = true; mManual.reset(nullptr); }
         if (command == Command::SHOW_HELP) {

@@ -46,6 +46,7 @@ struct Status {
     bool quit = false;                      ///< exit application now
     bool reload = false;                    ///< load the same video again
     bool sound = false;                     ///< play sounds
+    std::string inputString = "Baseline";
 
     Status(int argc, char** argv) : args(argc, argv) {}
     bool haveCamera() const { return args.camera != -1; }
@@ -104,6 +105,7 @@ public:
     int mOffsetFromMaxDetection = 0;
     std::unique_ptr<ManualRecorder> mManual;       ///< for manual-mode recording
     bool mRecordAnnotations = true;                ///< add annotations for racording?
+    std::vector<float> mLastSpeeds;
 private:
     static constexpr int EVENT_GAP_FRAMES = 12;
     static constexpr size_t MAX_SEGMENTS = 200;
@@ -123,7 +125,6 @@ private:
     int mEventsDetected = 0;                       ///< event counter
     int mMaxDetections = 0;
     int mLastDetectFrame = -EVENT_GAP_FRAMES;      ///< the frame when the last detection happened
-    std::vector<float> mLastSpeeds;
     float mMaxSpeed = 0;
 };
 
