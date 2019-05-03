@@ -34,7 +34,9 @@ struct Args {
     bool utiademo;                   ///< force utiademo visualizer
     bool debug;                      ///< force debug visualizer
     bool removal;                    ///< force removal visualizer (highest priority)
-    bool noRecord;                    ///< force removal visualizer (highest priority)
+    bool noRecord;                   ///< force removal visualizer (highest priority)
+    float exposure;                 ///< set exposure
+    float fps;                      ///< set fps
     fmo::Algorithm::Config params;   ///< algorithm parameters
 
     /// Print all parameters to a stream, separated by the provided character.

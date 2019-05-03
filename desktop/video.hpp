@@ -37,6 +37,25 @@ struct VideoInput {
         mCap->set(CV_CAP_PROP_POS_AVI_RATIO,0);
     }
 
+    void set_fps(float fpsVal) {
+        mCap->set(CV_CAP_PROP_FPS, fpsVal); 
+        mFps = (float)mCap->get(CV_CAP_PROP_FPS);;
+    }
+
+    double get_exposure() {
+        return mCap->get(CV_CAP_PROP_EXPOSURE);
+    }
+
+    void set_exposure(float expVal) {
+        mCap->set(CV_CAP_PROP_AUTO_EXPOSURE, 0.25); 
+        mCap->set(CV_CAP_PROP_EXPOSURE, expVal); 
+    }
+
+    void default_camera() {
+        mCap->set(CV_CAP_PROP_AUTO_EXPOSURE, 0.75); 
+        mCap->set(CV_CAP_PROP_FPS, 30); 
+    }
+
     fmo::Dims dims() const { return mDims; }
     float fps() const { return mFps; }
 

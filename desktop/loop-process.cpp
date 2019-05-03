@@ -34,7 +34,14 @@ Statistics processVideo(Status& s, size_t inputNum) {
     if(s.args.names.size() > inputNum) std::cout << "Processing " << s.args.names.at(inputNum) << std::endl;
     auto input = (!s.haveCamera()) ? VideoInput::makeFromFile(s.args.inputs.at(inputNum))
                                    : VideoInput::makeFromCamera(s.args.camera);
-    
+
+    if(s.args.exposure != 100)
+        input->set_exposure(s.args.exposure); 
+    if(s.args.fps != -1)
+        input->set_fps(s.args.fps); 
+    std::cout << "Exposure value: " << input->get_exposure() << std::endl;
+    std::cout << "FPS: " << input->fps() << std::endl;
+
     auto dims = input->dims();
     float fps = input->fps();
 
@@ -141,5 +148,6 @@ Statistics processVideo(Status& s, size_t inputNum) {
     }
 
     stat.print();
+    input->default_camera();                               
     return stat;
 }

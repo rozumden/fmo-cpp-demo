@@ -5,6 +5,8 @@
 namespace {
     using doc_t = const char* const;
     doc_t helpDoc = "Display help.";
+    doc_t expDoc = "Set exposure value. Should be between 0 and 1. Usually between 0.03 and 0.1.";
+    doc_t fpsDoc = "Set number of frames per second.";
     doc_t defaultsDoc = "Display default values for all parameters.";
     doc_t algorithmDoc = "<name> Specifies the name of the algorithm variant. Use --list to list "
                          "available algorithm names.";
@@ -102,6 +104,8 @@ Args::Args(int argc, char** argv)
       debug(false),
       removal(false),
       noRecord(false),
+      exposure(100),
+      fps(-1),
       params(),
       mParser(),
       mHelp(false),
@@ -125,6 +129,9 @@ Args::Args(int argc, char** argv)
     mParser.add("--debug", debugDoc, debug);
     mParser.add("--removal", removalDoc, removal);
     mParser.add("--no-record", noRecordDoc, noRecord);
+
+    mParser.add("--exposure", expDoc, exposure);
+    mParser.add("--fps", fpsDoc, fps);
 
     mParser.add("\nInput:");
     mParser.add("--include", includeDoc, [this](const std::string& path) { mParser.parse(path); });
