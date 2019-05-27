@@ -99,6 +99,7 @@ void DebugVisualizer::visualize(Status& s, const fmo::Region& frame, const Evalu
 // UTIA Demo
 UTIADemoVisualizer::UTIADemoVisualizer(Status &s) : vis1(s) {
     s.window.setTopLine("Fast Moving Objects Detection");
+    this->vis1.mode = 2;
 }
 
 
@@ -129,27 +130,29 @@ void UTIADemoVisualizer::visualize(Status& s, const fmo::Region& frame, const Ev
     if((int)playerName.size() > stringSize) 
         playerName = playerName.substr(0,stringSize);
 
-    if(vis1.mLastSpeeds.size() > 0) {
-        float spnow = std::round(vis1.mLastSpeeds[0]*100)/100;
-        if(s.window.mTable.size() < 10)
-            s.window.mTable.push_back(std::make_pair(spnow, playerName));
-        else {
-            bool putitthere = true;
-            for(auto &el : s.window.mTable) {
-                if(std::abs(el.first - spnow) < 0.001 && el.second.compare(playerName) == 0) {
-                    putitthere = false;
-                    break;
-                }
-            }
+    // if (vis1.mMaxSpeed > 0) {
+    //     float spnow = std::round(vis1.mMaxSpeed*100)/100;
 
-            if(putitthere) {
-                auto &lastel = s.window.mTable[s.window.mTable.size()-1];
-                if(spnow > lastel.first)
-                    lastel = std::make_pair(spnow, playerName);
-            }
-        }
-    }
-    std::sort(s.window.mTable.begin(), s.window.mTable.end(), std::greater <>());
+    //     bool putitthere = true;
+    //     for(auto &el : s.window.mTable) {
+    //         if(std::abs(el.first - spnow) < 0.001 && el.second.compare(playerName) == 0) {
+    //             putitthere = false;
+    //             break;
+    //         }
+    //     }
+
+    //     if(putitthere) {
+    //         if(s.window.mTable.size() < 10) {
+    //             s.window.mTable.push_back(std::make_pair(spnow, playerName));
+    //         } else {
+    //             auto &lastel = s.window.mTable[s.window.mTable.size()-1];
+    //             if(spnow > lastel.first) {
+    //                 lastel = std::make_pair(spnow, playerName);
+    //             }
+    //         }
+    //     }
+    // }
+    // std::sort(s.window.mTable.begin(), s.window.mTable.end(), std::greater <>());
 
     if(s.window.visTable) {
         std::string pref;
@@ -321,8 +324,8 @@ void DemoVisualizer::printStatus(Status& s, int fpsEstimate) const {
 
     // s.window.print(recording ? "recording" : "not recording");
     s.window.print("Detections: " + std::to_string(mMaxDetections));
-    for (unsigned int i = 0; i < mLastSpeeds.size(); ++i) {
-        s.window.print("Speed " + std::to_string(i+1) + " : " + std::to_string(std::round(mLastSpeeds[i]*fctr * 100)/100).substr(0,4) + meas);
+    for (unsigned int i = 0; i < mSpeeds.size(); ++i) {
+        s.window.print("Speed " + std::to_string(i+1) + " : " + std::to_string(std::round(mSpeeds[i]*fctr * 100)/100).substr(0,4) + meas);
     }
     s.window.print("Max speed: " + std::to_string(std::round(mMaxSpeed*fctr * 100)/100).substr(0,4) + meas);
 
@@ -352,6 +355,7 @@ void DemoVisualizer::onDetection(const Status& s, const fmo::Algorithm::Detectio
     if (detection.predecessor.haveCenter()) {  
         fmo::Bounds segment = {detection.predecessor.center, detection.object.center};
         mSegments.push_back(segment);
+        // std::cout << "-----------------------------\n";
     } else if (detection.object.curve != nullptr) {
         fmo::SCurve *c = detection.object.curve->clone();
         c->scale = detection.object.scale;
@@ -365,12 +369,30 @@ void DemoVisualizer::onDetection(const Status& s, const fmo::Algorithm::Detectio
             sp = detection.object.velocity * 3600* fpsReal * radiusCm * 1e-5;
         else {
             float len = detection.object.velocity * (detection.object.radius+1.5);
-            std::cout << len << std::endl;
+            // std::cout << len << std::endl;
             sp = len * s.args.p2cm * fpsReal *3600 * 1e-5;
         }
-        mLastSpeeds.push_back(sp);
-        if(sp > mMaxSpeed) mMaxSpeed = sp;
+        mSpeeds.push_back(sp);
+
+        if(mLastSpeeds.size() > MAX_SPEED_FRAMES) {
+            mLastSpeeds[MAX_SPEED_FRAMES-1].first = MAX_SPEED_TIME;
+            mLastSpeeds[MAX_SPEED_FRAMES-1].second = sp;
+        } else {
+            mLastSpeeds.push_back(std::make_pair(MAX_SPEED_TIME, sp));
+        }
+
+        std::sort(mLastSpeeds.begin(), mLastSpeeds.end(), std::greater <>());
     }
+
+    float mSpeedNow = 0;
+    for(auto& elv : mLastSpeeds) {
+        if(elv.first > 0) {
+            elv.first--;
+            if(elv.second > mSpeedNow) mSpeedNow = elv.second;
+        }
+    }
+
+    if(detection.object.curve != nullptr) mMaxSpeed = mSpeedNow;
 
     // make sure to keep the number of segments bounded in case there's a long event
     if (mSegments.size() > MAX_SEGMENTS) {
@@ -418,13 +440,21 @@ void DemoVisualizer::process(Status& s, const fmo::Region& frame, fmo::Algorithm
         mCurves.clear();
     }
 
+    // decrease last speeds
+    for(auto& elv : mLastSpeeds) {
+        if(elv.first > 0) {
+            elv.first--;
+        }
+    }
+    //
+
     mStats.tick();
     auto fpsEstimate = [this]() { return std::round(mStats.quantilesHz().q50); };
 
     // get detections
     algorithm.getOutput(mOutput, true);
     mNumberDetections = mOutput.detections.size();
-    if(mNumberDetections > 0)     mLastSpeeds.clear();
+    if(mNumberDetections > 0)     mSpeeds.clear();
 
     if (mNumberDetections > mMaxDetections) {
         mMaxDetections = mNumberDetections;
@@ -471,9 +501,36 @@ void DemoVisualizer::processKeyboard(Status& s, const fmo::Region& frame) {
         auto command = s.window.getCommand(false);
         if (command == Command::PAUSE) { s.paused = !s.paused; }
         if (command == Command::INPUT) { 
-            std::getline(std::cin, s.inputString);
+            // std::getline(std::cin, s.inputString);
             // system("zenity  --title  \"Gimme some text!\" --entry --text \"Enter your text here\"");
             // s.inputString = "Denis"; 
+            char keyCode = ' '; 
+            std::vector<char> vec;
+            while(keyCode != 13) {
+                if(keyCode != ' ')
+                    vec.push_back(keyCode);
+                keyCode = cv::waitKey(0);
+            }
+            std::string str(vec.begin(), vec.end());
+            s.inputString = str;
+
+            auto &playerName = s.inputString;
+            int stringSize = 10;
+            if((int)playerName.size() < stringSize) 
+                playerName = playerName + std::string(stringSize-playerName.size(), ' ');
+            if((int)playerName.size() > stringSize) 
+                playerName = playerName.substr(0,stringSize);
+
+            float spnow = std::round(mMaxSpeed*100)/100;
+            if(s.window.mTable.size() < 10) {
+                s.window.mTable.push_back(std::make_pair(spnow, playerName));
+            } else {
+                auto &lastel = s.window.mTable[s.window.mTable.size()-1];
+                if(spnow > lastel.first) {
+                    lastel = std::make_pair(spnow, playerName);
+                }
+            }
+            std::sort(s.window.mTable.begin(), s.window.mTable.end(), std::greater <>());
         }
         if (command == Command::STEP) step = true;
         if (command == Command::QUIT) { s.quit = true; mManual.reset(nullptr); }

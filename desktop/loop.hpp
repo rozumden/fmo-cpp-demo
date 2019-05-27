@@ -105,10 +105,14 @@ public:
     int mOffsetFromMaxDetection = 0;
     std::unique_ptr<ManualRecorder> mManual;       ///< for manual-mode recording
     bool mRecordAnnotations = true;                ///< add annotations for racording?
-    std::vector<float> mLastSpeeds;
+    std::vector<float> mSpeeds;
+    std::vector<std::pair<int, float>> mLastSpeeds;
+    float mMaxSpeed = 0;
 private:
     static constexpr int EVENT_GAP_FRAMES = 12;
     static constexpr size_t MAX_SEGMENTS = 200;
+    static constexpr int MAX_SPEED_FRAMES = 20;
+    const int MAX_SPEED_TIME = 60;
 
     void updateHelp(Status& s);
     void printStatus(Status& s, int fpsEstimate) const;
@@ -125,7 +129,6 @@ private:
     int mEventsDetected = 0;                       ///< event counter
     int mMaxDetections = 0;
     int mLastDetectFrame = -EVENT_GAP_FRAMES;      ///< the frame when the last detection happened
-    float mMaxSpeed = 0;
 };
 
 struct TUTDemoVisualizer : public Visualizer {
