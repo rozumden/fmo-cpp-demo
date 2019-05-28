@@ -154,18 +154,18 @@ void UTIADemoVisualizer::visualize(Status& s, const fmo::Region& frame, const Ev
     // }
     // std::sort(s.window.mTable.begin(), s.window.mTable.end(), std::greater <>());
 
-    if(s.window.visTable) {
-        std::string pref;
-        for (int ik = 0; ik < (int)s.window.mTable.size(); ++ik) {
-            auto &el = s.window.mTable[ik];
-            if(ik < 9)
-               pref = " ";
-            else
-               pref = "";
+    // if(s.window.visTable) {
+    //     std::string pref;
+    //     for (int ik = 0; ik < (int)s.window.mTable.size(); ++ik) {
+    //         auto &el = s.window.mTable[ik];
+    //         if(ik < 9)
+    //            pref = " ";
+    //         else
+    //            pref = "";
 
-            s.window.print(pref+std::to_string(ik+1)+". "+el.second+": "+std::to_string(el.first).substr(0,4) + " km/h");
-        }
-    }
+    //         s.window.print(pref+std::to_string(ik+1)+". "+el.second+": "+std::to_string(el.first).substr(0,4) + " km/h");
+    //     }
+    // }
     s.window.display(this->vis1.mVis);
 
     this->vis1.processKeyboard(s,frame);
@@ -501,9 +501,28 @@ void DemoVisualizer::processKeyboard(Status& s, const fmo::Region& frame) {
         auto command = s.window.getCommand(false);
         if (command == Command::PAUSE) { s.paused = !s.paused; }
         if (command == Command::INPUT) { 
+            uint nPlayers = 10;
+            int stringSize = 10;
+            bool visTable = s.window.visTable;
+            s.window.visTable = false;
+            float spnow = std::round(mMaxSpeed*100)/100;
+
             // std::getline(std::cin, s.inputString);
             // system("zenity  --title  \"Gimme some text!\" --entry --text \"Enter your text here\"");
             // s.inputString = "Denis"; 
+
+            if(s.window.mTable.size() >= nPlayers) {
+                auto &lastel = s.window.mTable[s.window.mTable.size()-1];
+                if(spnow <= lastel.first) {
+                    s.window.setCenterLine("Sorry, not in top "+std::to_string(nPlayers), "");
+                    s.window.display(mVis);
+                    cv::waitKey(500);
+                    s.window.visTable = visTable;
+                    s.window.setCenterLine("", "");
+                    s.window.display(mVis);
+                    continue;
+                }
+            }
 
             s.window.setCenterLine("Input player's name", "");
             s.window.display(mVis);
@@ -525,14 +544,12 @@ void DemoVisualizer::processKeyboard(Status& s, const fmo::Region& frame) {
             s.inputString = str;
 
             auto &playerName = s.inputString;
-            int stringSize = 10;
             if((int)playerName.size() < stringSize) 
                 playerName = playerName + std::string(stringSize-playerName.size(), ' ');
             if((int)playerName.size() > stringSize) 
                 playerName = playerName.substr(0,stringSize);
 
-            float spnow = std::round(mMaxSpeed*100)/100;
-            if(s.window.mTable.size() < 10) {
+            if(s.window.mTable.size() < nPlayers) {
                 s.window.mTable.push_back(std::make_pair(spnow, playerName));
             } else {
                 auto &lastel = s.window.mTable[s.window.mTable.size()-1];
@@ -541,6 +558,7 @@ void DemoVisualizer::processKeyboard(Status& s, const fmo::Region& frame) {
                 }
             }
             std::sort(s.window.mTable.begin(), s.window.mTable.end(), std::greater <>());
+            s.window.visTable = visTable;
         }
         if (command == Command::STEP) step = true;
         if (command == Command::QUIT) { s.quit = true; mManual.reset(nullptr); }

@@ -76,6 +76,7 @@ void Window::printText(cv::Mat& mat) {
     cv::Scalar color(mColour.b, mColour.g, mColour.r);
 
     // render text in top left corner
+    int yMaxLines = 0;
     if (!mLines.empty()) {
         for (auto& line : mLines) {
             auto lineSize = cv::getTextSize(line, fontFace, fontScale, thick, &baseline);
@@ -85,6 +86,7 @@ void Window::printText(cv::Mat& mat) {
         // darken the area for the text
         int xMax = 2 * pad + lineWidth;
         int yMax = 2 * pad + int(mLines.size()) * (above + below);
+        yMaxLines = yMax;
         cv::Rect rect{0, 0, xMax, yMax};
         mat(rect) = 0.3 * mat(rect);
 
@@ -130,8 +132,8 @@ void Window::printText(cv::Mat& mat) {
         // int offsetWUnder = (mat.cols - lineUnderWidth)/2;
         int lineWidth = lineSize.width+2*pad;
         int lineHeight = lineSize.height+2*pad;
-        int offsetW = (mat.cols - lineWidth)/2;
-        int offsetH = (mat.rows - lineHeight)/2;
+        int offsetW = (mat.cols - lineWidth)/2 + 4*pad;
+        int offsetH = (mat.rows - lineHeight)/2 + 2*lineHeight;
         cv::Rect helpRect{offsetW, offsetH, lineWidth, lineHeight};
         mat(helpRect) = 0.3 * mat(helpRect);
         cv::Point helpOrigin{offsetW+pad, offsetH-2*pad};
@@ -142,15 +144,38 @@ void Window::printText(cv::Mat& mat) {
 
 
     // render table 
-    // if (visTable && !mTable.empty()) {
-    //     int lineWidth = mat.cols / 3;
-    //     int helpRectHeight = ((above + below) + 2 * pad) * mTable.size();
-    //     cv::Rect helpRect{mat.cols*2/3, mat.cols/10, lineWidth, helpRectHeight};
-    //     mat(helpRect) = 0.3 * mat(helpRect);
-    //     // for(auto &el : mTable) {
+    if (visTable && !mTable.empty()) {
+        auto lineSize1 = cv::getTextSize("10. ", fontFace, fontScale, thick, &baseline);
+        auto lineSize2 = cv::getTextSize("wwwwwwwwww  ", fontFace, fontScale, thick, &baseline);
+        auto lineSize3 = cv::getTextSize("444.44", fontFace, fontScale, thick, &baseline);
+        lineWidth = lineSize1.width + lineSize2.width + lineSize3.width;
 
-    //     // }
-    // }
+        // darken the area for the text
+        int xMax = pad + lineWidth;
+        int yMax = yMaxLines + 2*pad + int(mTable.size()) * (above + below);
+        cv::Rect rect{0, yMaxLines, xMax, yMax-yMaxLines};
+        mat(rect) = 0.3 * mat(rect);
+
+        // render the text
+        std::string pref;
+        int y = yMaxLines + pad;
+        for (int ik = 0; ik < (int)mTable.size(); ++ik) {
+            auto &el = mTable[ik];
+            if(ik < 9)
+               pref = " ";
+            else
+               pref = "";
+            y += above;
+            
+            cv::Point origin1 = {pad, y};
+            cv::Point origin2 = {lineSize1.width + pad, y};
+            cv::Point origin3 = {lineSize1.width + lineSize2.width +pad, y};
+            cv::putText(mat, pref+std::to_string(ik+1)+".", origin1, fontFace, fontScale, color, thick);
+            cv::putText(mat, el.second, origin2, fontFace, fontScale, color, thick);
+            cv::putText(mat, std::to_string(el.first).substr(0,4), origin3, fontFace, fontScale, color, thick);
+            y += below;
+        }
+    }
 }
 
 Command Window::getCommand(bool block) {
