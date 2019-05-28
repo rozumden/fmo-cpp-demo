@@ -504,13 +504,23 @@ void DemoVisualizer::processKeyboard(Status& s, const fmo::Region& frame) {
             // std::getline(std::cin, s.inputString);
             // system("zenity  --title  \"Gimme some text!\" --entry --text \"Enter your text here\"");
             // s.inputString = "Denis"; 
+
+            s.window.setCenterLine("Input player's name", "");
+            s.window.display(mVis);
+
             char keyCode = ' '; 
             std::vector<char> vec;
             while(keyCode != 13) {
-                if(keyCode != ' ')
+                if(keyCode != ' ') {
                     vec.push_back(keyCode);
+                    std::string str(vec.begin(), vec.end());
+                    s.window.setCenterLine("Input player's name", str);
+                    s.window.display(mVis);
+                }
                 keyCode = cv::waitKey(0);
             }
+            s.window.setCenterLine("","");
+            s.window.display(mVis);
             std::string str(vec.begin(), vec.end());
             s.inputString = str;
 

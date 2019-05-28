@@ -120,6 +120,27 @@ void Window::printText(cv::Mat& mat) {
         cv::putText(mat, mTopLine, helpOrigin, fontFace, fontScale, color, thick);
     }
 
+    // render center
+    if (mCenterLine != "" || mCenterUnderLine != "") {
+        double fontScaleCenter = 3*fontScale;
+        int thickCenter = 3*thick;
+        auto lineSize = cv::getTextSize(mCenterLine, fontFace, fontScaleCenter, thickCenter, &baseline);
+        // auto lineSizeUnder = cv::getTextSize(mCenterUnderLine, fontFace, fontScaleCenter, thickCenter, &baseline);
+        // int lineUnderWidth = lineSizeUnder.width+2*pad;
+        // int offsetWUnder = (mat.cols - lineUnderWidth)/2;
+        int lineWidth = lineSize.width+2*pad;
+        int lineHeight = lineSize.height+2*pad;
+        int offsetW = (mat.cols - lineWidth)/2;
+        int offsetH = (mat.rows - lineHeight)/2;
+        cv::Rect helpRect{offsetW, offsetH, lineWidth, lineHeight};
+        mat(helpRect) = 0.3 * mat(helpRect);
+        cv::Point helpOrigin{offsetW+pad, offsetH-2*pad};
+        cv::Point helpOriginUnder{offsetW+pad, offsetH+lineHeight-2*pad};
+        cv::putText(mat, mCenterLine, helpOrigin, fontFace, fontScaleCenter, color, thickCenter);
+        cv::putText(mat, mCenterUnderLine, helpOriginUnder, fontFace, fontScaleCenter, color, thickCenter);
+    }
+
+
     // render table 
     // if (visTable && !mTable.empty()) {
     //     int lineWidth = mat.cols / 3;

@@ -67,6 +67,12 @@ struct Window {
     /// Sets the text to display at the bottom of the screen.
     void setBottomLine(const std::string& text) { mBottomLine = text; }
 
+    /// Sets the text to display in the center of the screen.
+    void setCenterLine(const std::string& text, const std::string& textunder) { 
+        mCenterLine = text; 
+        mCenterUnderLine = textunder;
+    }
+
     /// Sets the text to display at the bottom of the screen.
     void setTopLine(const std::string& text) { mTopLine = text; }
 
@@ -94,6 +100,8 @@ private:
     bool mOpen = false;
     std::string mBottomLine;
     std::string mTopLine;
+    std::string mCenterLine;
+    std::string mCenterUnderLine;
 public: 
     std::vector<std::pair<float, std::string>> mTable;
     bool visTable = false;
