@@ -529,9 +529,15 @@ void DemoVisualizer::processKeyboard(Status& s, const fmo::Region& frame) {
 
             char keyCode = ' '; 
             std::vector<char> vec;
-            while(keyCode != 13) {
+            while(keyCode != 13 && keyCode != '\n' && keyCode != 10) {
+                // std::cout << (int) keyCode << std::endl;
                 if(keyCode != ' ') {
-                    vec.push_back(keyCode);
+                    if(keyCode == 127 || keyCode == 8) {
+                        if(vec.size() > 0)
+                            vec.pop_back();
+                    } else {
+                        vec.push_back(keyCode);
+                    }
                     std::string str(vec.begin(), vec.end());
                     s.window.setCenterLine("Input player's name", str);
                     s.window.display(mVis);

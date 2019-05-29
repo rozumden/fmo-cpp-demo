@@ -135,7 +135,8 @@ void Window::printText(cv::Mat& mat) {
         int offsetW = (mat.cols - lineWidth)/2 + 4*pad;
         int offsetH = (mat.rows - lineHeight)/2 + 2*lineHeight;
         cv::Rect helpRect{offsetW, offsetH, lineWidth, lineHeight};
-        mat(helpRect) = 0.3 * mat(helpRect);
+        // mat(helpRect) = 0.3 * mat(helpRect);
+        mat(helpRect) = 0;
         cv::Point helpOrigin{offsetW+pad, offsetH-2*pad};
         cv::Point helpOriginUnder{offsetW+pad, offsetH+lineHeight-2*pad};
         cv::putText(mat, mCenterLine, helpOrigin, fontFace, fontScaleCenter, color, thickCenter);
