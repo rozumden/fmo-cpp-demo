@@ -11,6 +11,8 @@ namespace fmo {
         struct Config {
             /// Initial value for $\Delta$.
             uint8_t thresh;
+            /// Threshold factor.
+            float diffThFactor;
             /// If the noise level is below this value, $\Delta$ is decreased to make
             /// differentiation more sensitive.
             float noiseMin;

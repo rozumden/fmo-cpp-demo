@@ -9,6 +9,7 @@ namespace {
     doc_t fpsDoc = "Set number of frames per second.";
     doc_t radiusDoc = "Set object radius in cm. Used for speed estimation. Used if --p2cm is not specified. By default used for tennis/floorball: 3.6 cm.";
     doc_t p2cmDoc = "Set how many cm are in one pixel on object. Used for speed estimation. More dominant than --radius.";
+    doc_t diffthDoc = "Differential image threshold factor. Default 1.0.";
     doc_t defaultsDoc = "Display default values for all parameters.";
     doc_t algorithmDoc = "<name> Specifies the name of the algorithm variant. Use --list to list "
                          "available algorithm names.";
@@ -137,6 +138,7 @@ Args::Args(int argc, char** argv)
     mParser.add("--exposure", expDoc, exposure);
     mParser.add("--fps", fpsDoc, fps);
     mParser.add("--p2cm", p2cmDoc, p2cm);
+    mParser.add("--dfactor", diffthDoc, params.diff.diffThFactor);
     mParser.add("--radius", radiusDoc, radius);
 
     mParser.add("\nInput:");

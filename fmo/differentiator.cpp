@@ -13,7 +13,7 @@ namespace fmo {
     }
 
     Differentiator::Config::Config()
-        : thresh(24), noiseMin(0.0035), noiseMax(0.0047), adjustPeriod(4) {}
+        : thresh(24), diffThFactor(1.0), noiseMin(0.0035), noiseMax(0.0047), adjustPeriod(4) {}
 
     Differentiator::Differentiator(const Config& cfg)
         : mCfg(cfg), mThresh(std::min(std::max(cfg.thresh, threshMin), threshMax)) {
@@ -121,14 +121,15 @@ namespace fmo {
         absdiff(src1, src2, mAbsDiff);
 
         // threshold
+        auto mUsedThresh = mCfg.diffThFactor*mThresh;
         switch (mAbsDiff.format()) {
         case Format::GRAY: {
-            greater_than(mAbsDiff, dst, mThresh);
+            greater_than(mAbsDiff, dst, mUsedThresh);
             return;
         }
         case Format::BGR:
         case Format::YUV: {
-            addAndThresh(mAbsDiff, dst, mThresh);
+            addAndThresh(mAbsDiff, dst, mUsedThresh);
             return;
         }
         default:
