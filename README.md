@@ -20,11 +20,8 @@ To run real-time on a camera (integer for camera index):
 (while running: different modes switched by "0", "1", "2", "3", "4")
 4. fmo-desktop --camera 0 --removal
 5. fmo-desktop --camera 0 --debug
-
 (while running: "d" for difference image, "i" for thresholded, "t" for distance transform, "o" for original image, etc.)
-
-To run for a specific video:
-fmo-desktop --input <path> --demo
+ 
   
 Parameters: 
 
@@ -39,5 +36,8 @@ Parameters:
 --radius    Set object radius in cm. Used for speed estimation. Used if --p2cm is not specified. By default used for tennis/floorball: 3.6 cm.
 
 
+To run for a specific video:
+fmo-desktop --input <path> --demo
+  
 Help:
 fmo-desktop --help
