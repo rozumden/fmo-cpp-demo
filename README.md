@@ -59,7 +59,7 @@ Differential image threshold factor. Default 1.0.
 Set object radius in cm. Used for speed estimation. Used if --p2cm is not specified. By default used for tennis/floorball: 3.6 cm.
 
 
-## To run for a specific video:
+## To run for a specific video
 > fmo-desktop --input <path> --demo
   
 ## Help
