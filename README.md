@@ -14,7 +14,7 @@ To compile:
 
 To run real-time on a camera (integer for camera index):
 1. fmo-desktop --camera 0 --utiademo
-(while running: space to stop, enter to make a step, "n" to enter name to score table, "1" to hide score table, "2" to show score table, "r" to start or stop recording, "h" for help subwindow, "a" and "m" to switch between automatic and manual mode, , esc to exit)
+(while running: space to stop, enter to make a step, "n" to enter name to score table, "1" to hide score table, "2" to show score table, "r" to start or stop recording, "h" for help subwindow, "a" and "m" to switch between automatic and manual mode, esc to exit)
 2. fmo-desktop --camera 0 --demo
 3. fmo-desktop --camera 0 --tutdemo
 (while running: different modes switched by "0", "1", "2", "3", "4")
