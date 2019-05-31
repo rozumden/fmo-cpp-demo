@@ -14,7 +14,6 @@ To compile:
 
 To run real-time on a camera (integer for camera index):
 1. fmo-desktop --camera 0 --utiademo
-
 (while running: space to stop, enter to make a step, "n" to enter name to score table, "1" to hide score table, "2" to show score table, "r" to start or stop recording, "h" for help subwindow, "a" and "m" to switch between automatic and manual mode, , esc to exit)
 2. fmo-desktop --camera 0 --demo
 3. fmo-desktop --camera 0 --tutdemo
@@ -28,13 +27,16 @@ To run for a specific video:
 fmo-desktop --input <path> --demo
   
 Parameters: 
+
 --exposure  Set exposure value. Should be between 0 and 1. Usually between 0.03 and 0.1.
+
 --fps       Set number of frames per second.
---p2cm      Set how many cm are in one pixel on object. Used for speed
-            estimation. More dominant than --radius.
+
+--p2cm      Set how many cm are in one pixel on object. Used for speedm estimation. More dominant than --radius.
+            
 --dfactor   Differential image threshold factor. Default 1.0.
---radius    Set object radius in cm. Used for speed estimation. Used if --p2cm
-            is not specified. By default used for tennis/floorball: 3.6 cm.
+
+--radius    Set object radius in cm. Used for speed estimation. Used if --p2cm is not specified. By default used for tennis/floorball: 3.6 cm.
 
 
 Help:
