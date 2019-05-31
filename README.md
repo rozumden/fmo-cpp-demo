@@ -35,19 +35,19 @@ sudo make install
   
 ## Parameters: 
 
---exposure  Set exposure value. Should be between 0 and 1. Usually between 0.03 and 0.1.
+`--exposure <float> ` Set exposure value. Should be between 0 and 1. Usually between 0.03 and 0.1.
 
---fps       Set number of frames per second.
+`--fps `      Set number of frames per second.
 
---p2cm      Set how many cm are in one pixel on object. Used for speedm estimation. More dominant than --radius.
+`--p2cm `     Set how many cm are in one pixel on object. Used for speedm estimation. More dominant than --radius.
             
---dfactor   Differential image threshold factor. Default 1.0.
+`--dfactor `  Differential image threshold factor. Default 1.0.
 
---radius    Set object radius in cm. Used for speed estimation. Used if --p2cm is not specified. By default used for tennis/floorball: 3.6 cm.
+`--radius   ` Set object radius in cm. Used for speed estimation. Used if --p2cm is not specified. By default used for tennis/floorball: 3.6 cm.
 
 
 ## To run for a specific video:
-fmo-desktop --input <path> --demo
+> fmo-desktop --input <path> --demo
   
-## Help:
-fmo-desktop --help
+## Help
+> fmo-desktop --help
