@@ -2,38 +2,34 @@
 
 
 ## Prerequisites:
-1. opencv 
-2. boost
+1. `opencv `
+2. `boost`
 
 ## To compile:
-1. mkdir build
-2. cd build
-3. cmake ..
-4. make
-5. sudo make install
+```
+mkdir build
+cd build
+cmake ..
+make
+sudo make install
+```
 
 ## To run real-time on a camera (integer for camera index):
-```
-fmo-desktop --camera 0 --utiademo
-```
+
+> fmo-desktop --camera 0 --utiademo
+
 (while running: space to stop, enter to make a step, "n" to enter name to score table, "1" to hide score table, "2" to show score table, "r" to start or stop recording, "h" for help subwindow, "a" and "m" to switch between automatic and manual mode, esc to exit)
 
-```
-fmo-desktop --camera 0 --demo
-```
+> fmo-desktop --camera 0 --demo
 
-```
-3. fmo-desktop --camera 0 --tutdemo
-```
+> fmo-desktop --camera 0 --tutdemo
+
 (while running: different modes switched by "0", "1", "2", "3", "4")
 
-```
-4. fmo-desktop --camera 0 --removal
-```
+> fmo-desktop --camera 0 --removal
 
-```
-5. fmo-desktop --camera 0 --debug
-```
+> fmo-desktop --camera 0 --debug
+
 (while running: "d" for difference image, "i" for thresholded, "t" for distance transform, "o" for original image, etc.)
  
   
