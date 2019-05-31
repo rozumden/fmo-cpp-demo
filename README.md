@@ -27,7 +27,7 @@ While running: space to stop, enter to make a step, "n" to enter name to score t
 
 > fmo-desktop --camera 0 --tutdemo
 
-While running: different modes switched by "0", "1", "2", "3", "4".
+While running: different modes switched by "0", "1", "2", "3", "4". Warning: starts recording by default, `--no-record` to fix it.
 
 > fmo-desktop --camera 0 --removal
 
