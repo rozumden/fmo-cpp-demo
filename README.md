@@ -1,5 +1,21 @@
 # FMO detection (demo version)
 
+The demonstrator displays the detection and processing of fast moving objects in real-time.
+Various properties of the objects can be estimated, like velocity, radius or trajectory.
+Users can toss various objects such as balls or darts, “shoot” any objects in front of a webcam
+at speeds that the objects will appear as long streaks. Properties of these blurred steaks allow
+us to describe movement and shape of the object. The detected objects and their trajectories
+are shown in real-time. If the real object size of the object in world units is known, then object
+velocity can be estimated. By default we assume a floorball, thus for objects of other sizes the
+estimation will be corrupted, but these settings can be easily changed (see Parameters section). The user should
+understand that velocity is found solely from video frames, whereas current methods (for
+example in tennis tournaments) usually use radars for this task.
+Additionally, the total number of detections is shown. This may be particularly interesting when a
+lot of small objects, which for example are not from the same class, are thrown in front of the
+camera.
+Applications of the methods like removal of fast moving objects can be shown in real-time.
+Attendees will be able to play with the system, testing its limits (small objects, very fast throws,
+shaking the camera).
 
 ## Prerequisites
 ```
