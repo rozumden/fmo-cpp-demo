@@ -45,7 +45,9 @@ Minimalistic FMO detection.
 
 > fmo-desktop --camera 0 --tutdemo
 
-While running: different modes switched by "0", "1", "2", "3", "4". Warning: starts recording by default, `--no-record` to fix it.
+While running: different modes switched by "0", "1", "2", "3", "4". 
+
+Warning: starts recording by default, `--no-record` to fix it.
 
 0 - default with recorded videos
 
