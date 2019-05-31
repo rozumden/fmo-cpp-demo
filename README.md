@@ -12,13 +12,16 @@ To compile:
 4. make
 5. sudo make install
 
-To run real-time on a camera (two versions of demo):
-1. fmo-desktop --camera 0 --demo
-2. fmo-desktop --camera 0 --tutdemo
+To run real-time on a camera:
+1. fmo-desktop --camera 0 --utiademo
+2. fmo-desktop --camera 0 --demo
+3. fmo-desktop --camera 0 --tutdemo
+4. fmo-desktop --camera 0 --removal
 
-To run for a specific video (two versions of demo):
+To run for a specific video:
 1. fmo-desktop --input <path> --demo
-2. fmo-desktop --input <path> --tutdemo
+  
+Parameters: 
 
 Help:
 1. fmo-desktop --help
