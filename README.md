@@ -45,6 +45,16 @@ While running: space to stop, enter to make a step, "n" to enter name to score t
 
 While running: different modes switched by "0", "1", "2", "3", "4". Warning: starts recording by default, `--no-record` to fix it.
 
+0 - default with recorded videos
+
+1 - all detection for every frame
+
+2 - detection steps: input frame, difference image, distance transform and local maxima, detections
+
+3 - shows only the last frame where FMOs occurred and current frame in the corner
+
+4 - shows frame which had the largest amount of FMOs during last 10 seconds
+
 > fmo-desktop --camera 0 --removal
 
 > fmo-desktop --camera 0 --debug
