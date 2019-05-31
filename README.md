@@ -1,5 +1,5 @@
-# fmo-cpp
-FMO detection (demo version)
+# FMO detection (demo version)
+
 
 ## Prerequisites:
 1. opencv 
