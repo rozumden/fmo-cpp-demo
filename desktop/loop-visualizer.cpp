@@ -327,7 +327,8 @@ void DemoVisualizer::printStatus(Status& s, int fpsEstimate) const {
     for (unsigned int i = 0; i < mSpeeds.size(); ++i) {
         s.window.print("Speed " + std::to_string(i+1) + " : " + std::to_string(std::round(mSpeeds[i]*fctr * 100)/100).substr(0,4) + meas);
     }
-    s.window.print("Max speed: " + std::to_string(std::round(mMaxSpeed*fctr * 100)/100).substr(0,4) + meas);
+    Colour clr = Colour::lightRed();
+    s.window.print("Max speed: " + std::to_string(std::round(mMaxSpeed*fctr * 100)/100).substr(0,4) + meas, clr);
 
     // s.window.print("fps: " + std::to_string(fpsEstimate));
 //    s.window.print("[?] for help");

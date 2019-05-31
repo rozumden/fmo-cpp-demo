@@ -62,7 +62,8 @@ struct Window {
     void setTextColor(Colour color) { mColour = color; }
 
     /// Adds text to be rendered when the next image is displayed.
-    void print(const std::string& line) { mLines.push_back(line); }
+    void print(const std::string& line) { mLines.push_back(line); mLineClrs.push_back(mColour); }
+    void print(const std::string& line, Colour clr) { mLines.push_back(line); mLineClrs.push_back(clr); }
 
     /// Sets the text to display at the bottom of the screen.
     void setBottomLine(const std::string& text) { mBottomLine = text; }
@@ -96,6 +97,7 @@ private:
     int64_t mFrameNs = 0;
     int64_t mLastNs = 0;
     std::vector<std::string> mLines;
+    std::vector<Colour> mLineClrs;
     Colour mColour = Colour::lightGray();
     bool mOpen = false;
     std::string mBottomLine;

@@ -92,13 +92,18 @@ void Window::printText(cv::Mat& mat) {
 
         // render the text
         int y = pad;
+        int clri = 0;
         for (auto& line : mLines) {
             y += above;
             cv::Point origin = {pad, y};
-            cv::putText(mat, line, origin, fontFace, fontScale, color, thick);
+            auto &mclr = mLineClrs[clri];
+            cv::Scalar clr(mclr.b, mclr.g, mclr.r);
+            cv::putText(mat, line, origin, fontFace, fontScale, clr, thick);
             y += below;
+            clri++;
         }
         mLines.clear();
+        mLineClrs.clear();
     }
 
     // render bottom line
