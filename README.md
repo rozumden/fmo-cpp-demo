@@ -38,19 +38,24 @@ While running: "d" for difference image, "i" for thresholded, "t" for distance t
   
 ## Parameters
 
-`--exposure <float> ` 
+`--exposure <float> `
+
 Set exposure value. Should be between 0 and 1. Usually between 0.03 and 0.1.
 
-`--fps <int>`      
+`--fps <int>`
+
 Set number of frames per second.
 
-`--p2cm <float>`     
+`--p2cm <float>`
+
 Set how many cm are in one pixel on object. Used for speedm estimation. More dominant than --radius.
             
-`--dfactor <float>`  
+`--dfactor <float>`
+
 Differential image threshold factor. Default 1.0.
 
-`--radius  <float> ` 
+`--radius  <float> `
+
 Set object radius in cm. Used for speed estimation. Used if --p2cm is not specified. By default used for tennis/floorball: 3.6 cm.
 
 
