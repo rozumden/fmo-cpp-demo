@@ -1,13 +1,13 @@
 # FMO detection (demo version)
 
 
-## Prerequisites:
+## Prerequisites
 ```
 opencv 
 boost
 ```
 
-## To compile:
+## To compile
 ```
 mkdir build
 cd build
