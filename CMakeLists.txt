@@ -38,6 +38,3 @@ if(FMO_BUILD_DESKTOP)
     add_subdirectory("desktop" "")
 endif()
 
-if(FMO_BUILD_TESTS)
-    add_subdirectory("tests" "")
-endif()

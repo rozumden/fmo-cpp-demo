@@ -51,7 +51,7 @@ namespace fmo {
         };
 
         /// Connected component data.
-        struct Component {
+        struct Component final {
             enum Status : int16_t {
                 NOT_PROCESSED,
                 TOO_LARGE,

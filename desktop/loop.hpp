@@ -60,6 +60,8 @@ Statistics processVideo(Status& s, size_t inputNum);
 struct Visualizer {
     virtual void visualize(Status& s, const fmo::Region& frame, const Evaluator* evaluator,
                            const EvalResult& evalResult, fmo::Algorithm& algorithm) = 0;
+
+    virtual ~Visualizer() {}
 };
 
 struct DebugVisualizer : public Visualizer {
@@ -159,9 +161,10 @@ struct UTIADemoVisualizer : public Visualizer {
 
     virtual void visualize(Status& s, const fmo::Region& frame, const Evaluator* evaluator,
                            const EvalResult& evalResult, fmo::Algorithm& algorithm) override;
-
-private:
+public:
     bool mRecord = false;
+    
+private:
     int mPreviousDetections = 0;
     DemoVisualizer vis1;
     std::vector<cv::Mat> imgs;
