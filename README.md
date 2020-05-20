@@ -86,7 +86,7 @@ Set how many cm are in one pixel on object. Used for speedm estimation. More dom
             
 `--dfactor <float>`
 
-Differential image threshold factor. Default 1.0.
+Differential image threshold factor. Default 1.0. Suggested value for FMO dataset is 0.45.
 
 `--radius  <float> `
 
