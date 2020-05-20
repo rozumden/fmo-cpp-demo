@@ -98,5 +98,10 @@ Set object radius in cm. Used for speed estimation. Used if --p2cm is not specif
 ## To run for a specific video
 > fmo-desktop --input <path> --demo
   
+## Examples 
+
+<img src="data/app.gif" width="900">
+
+
 ## Help
 > fmo-desktop --help
