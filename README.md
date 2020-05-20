@@ -33,6 +33,7 @@ sudo make install
 ```
 
 Compiled version for Windows: http://cmp.felk.cvut.cz/fmo/files/fmo-demo_windows_compiled.zip 
+Android mobile application (test version): http://cmp.felk.cvut.cz/fmo/app.apk
 
 ## To run real-time on a camera 
 Integer after `--camera` for camera index.
