@@ -100,6 +100,10 @@ Set object radius in cm. Used for speed estimation. Used if --p2cm is not specif
   
 ## Examples 
 
+<img src="data/desktop.gif" width="900">
+
+<img src="data/falling.gif" width="900">
+
 <img src="data/app.gif" width="900">
 
 
