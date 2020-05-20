@@ -47,7 +47,7 @@ namespace {
                       "--frame, --pause.";
     doc_t yuvDoc = "Feed image data into the algorithm in YCbCr color space.";
     doc_t recordDirDoc = "<dir> Output directory to save video to. A new video file will be "
-                         "created, storing the unmodified input video. The name of the video file "
+                         "created, storing the input video with optionally overlaid detections. The name of the video file "
                          "will be determined by system time. The directory must exist.";
     doc_t evalDirDoc = "<dir> Directory to save evaluation report to. A single file text file will "
                        "be created there with a unique name based on timestamp. Must be used with "
