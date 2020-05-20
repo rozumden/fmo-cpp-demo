@@ -102,7 +102,11 @@ Set object radius in cm. Used for speed estimation. Used if --p2cm is not specif
 
 <img src="data/desktop.gif" width="700">
 
-<img src="data/falling.gif" width="500"><img src="data/app.gif" width="500">
+<p float="left">
+  <img src="data/falling.gif" width="500">
+  <img src="data/app.gif" width="500">
+</p>
+
 
 
 ## Help
