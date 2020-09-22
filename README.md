@@ -22,12 +22,12 @@ shaking the camera).
 opencv 
 boost
 ```
-opencv version 3.0.0
+opencv recommended version 3.4.0
 install by running
 ```
 git clone https://github.com/Itseez/opencv.git
 cd opencv
-git checkout 3.0.0
+git checkout 3.4.0
 ...compile...
 ```
 
